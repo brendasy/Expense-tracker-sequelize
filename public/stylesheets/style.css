@@ -1,0 +1,85 @@
+.mr-02 {
+  margin-right: 0.2rem;
+}
+
+.mb-05 {
+  margin-bottom: 0.5rem;
+}
+
+.delete-icon {
+  cursor: pointer;
+}
+
+.delete-icon:hover {
+  color: red;
+}
+
+.btn-send {
+  color: #495057;
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+}
+
+.btn-create {
+  right:0;
+}
+
+.btn-send:hover {
+  color: #fff;
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+
+.collapsible {
+  color:#fff;
+  margin-left: 1rem;
+}
+
+.collapsible:hover {
+  background-color: #839496;
+}
+
+.collapsible:after {
+  content: '\002B';
+  /* color: #495057; */
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.active:after {
+  content: "\2212";
+}
+
+.content {
+  padding: 0 18px;
+  overflow: hidden;
+  display: none;
+  opacity: 1;
+  transition: opacity 0.2s ease-out;
+}
+
+.food::before {
+  content: "\f2e7";
+}
+
+.transpotation::before {
+  content: "\f5b6";
+}
+
+.entertainment::before {
+   content: "\f582";
+}
+
+.grocery::before {
+  content: "\f015";
+}
+
+.others::before {
+  content: "\f304";
+}
+
+.btn-facebook {
+  background-color: #3B5998 !important;
+  color: #fff !important;
+}
