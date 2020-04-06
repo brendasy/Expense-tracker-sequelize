@@ -30,8 +30,7 @@ router.get('/filter', authenticated, (req, res) => {
           let recordsMonth = record.date.getMonth() + 1
 
           const getTime = record.date
-          record.date = (getTime.getMonth() + 1) + '-' + getTime.getDate() + '-' + getTime.getFullYear()  //修正時間顯示格式
-
+          record.date = getTime.toLocaleDateString()
           if (filter.month && filter.category) {
             if (filter.month.includes(recordsMonth.toString())) { //是否符合篩選月份
 
@@ -56,7 +55,7 @@ router.get('/filter', authenticated, (req, res) => {
         for (record of records) {
 
           const getTime = record.date
-          record.date = (getTime.getMonth() + 1) + '-' + getTime.getDate() + '-' + getTime.getFullYear()  //修正時間顯示格式
+          record.date = getTime.toLocaleDateString()
         }
       }
 

@@ -52,9 +52,9 @@ router.get('/', authenticated, (req, res) => {
     })
     .then(records => {
       for (record of records) {
-        console.log('record date', record.date)
+
         const getTime = record.date
-        record.date = (getTime.getMonth() + 1) + '-' + getTime.getDate() + '-' + getTime.getFullYear()
+        record.date = getTime.toLocaleDateString()
       }
       return res.render('index', { records, totalAmount: getTotal(records) })
     })
@@ -70,6 +70,8 @@ router.get('/:id/edit', authenticated, (req, res) => {
       if (!user) throw new Error('user not found')
 
       return Record.findOne({
+        raw: true,
+        nest: true,
         where: {
           UserId: req.user.id,
           Id: req.params.id
@@ -78,8 +80,8 @@ router.get('/:id/edit', authenticated, (req, res) => {
     })
     .then(record => {
       const getTime = record.date
-      record.date = (getTime.getMonth() + 1) + '-' + getTime.getDate() + '-' + getTime.getFullYear()
-      return res.render('edit', { record: record.get() })
+      record.date = getTime.toLocaleDateString()
+      return res.render('edit', { record })
     })
     .catch(error => { return res.status(422).json(error) })
 
