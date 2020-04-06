@@ -5,8 +5,6 @@ if (process.env.NODE_ENV !== 'production') {      // 如果不是 production 模
 }
 const app = express()
 const exhbs = require('express-handlebars')
-const mongoose = require('mongoose')
-const Record = require('./models/record')
 const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
 const flash = require('connect-flash')
@@ -49,18 +47,6 @@ app.use('/user', require('./routes/user'))
 app.use('/', require('./routes/home'))
 app.use('/auth', require('./routes/auth'))
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/record', { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
-const db = mongoose.connection
-
-// 連線異常
-db.on('error', () => {
-  console.log('mongodb error!')
-})
-
-// 連線成功
-db.once('open', () => {
-  console.log('mongodb connected!')
-})
 
 
 

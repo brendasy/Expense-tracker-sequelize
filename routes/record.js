@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const Record = require('../models/record')
+const db = require('../models')
+const Record = db.Record
+const User = db.User
 const { getTotal } = require('../expense-tracker')
 const { authenticated } = require('../config/auth')
 
@@ -21,48 +23,65 @@ router.post('/', authenticated, (req, res) => {
   if (errors.length > 0) {
     return res.render('new', { errors })
   }
+
   const record = new Record({
     name,
     category,
     date,
     amount,
     merchant,
-    userId: req.user._id
+    UserId: req.user.id
   })
-  record.save(err => {
-    if (err) return console.error(err)
-    return res.redirect('/')
-  })
-
+  record.save()
+    .then(record => res.redirect('/'))
+    .catch(err => console.log(err))
 })
 
 // 瀏覽全部資料
 router.get('/', authenticated, (req, res) => {
 
-  Record.find({ userId: req.user._id })
-    .lean()
-    .exec((err, records) => {
-      if (err) return console.error(err)
-      for (record of records) {
+  User.findByPk(req.user.id)
+    .then(user => {
+      if (!user) throw new Error('user not found')
 
+      return Record.findAll({
+        raw: true,
+        nest: true,
+        where: { UserId: req.user.id }
+      })
+    })
+    .then(records => {
+      for (record of records) {
+        console.log('record date', record.date)
         const getTime = record.date
         record.date = (getTime.getMonth() + 1) + '-' + getTime.getDate() + '-' + getTime.getFullYear()
       }
       return res.render('index', { records, totalAmount: getTotal(records) })
     })
+    .catch(error => { return res.status(422).json(error) })
+
 })
 
 // 取得修改頁面
 router.get('/:id/edit', authenticated, (req, res) => {
 
-  Record.findOne({ _id: req.params.id, userId: req.user._id })
-    .lean()
-    .exec((err, record) => {
-      if (err) return console.error(err)
+  User.findByPk(req.user.id)
+    .then(user => {
+      if (!user) throw new Error('user not found')
+
+      return Record.findOne({
+        where: {
+          UserId: req.user.id,
+          Id: req.params.id
+        }
+      })
+    })
+    .then(record => {
       const getTime = record.date
       record.date = (getTime.getMonth() + 1) + '-' + getTime.getDate() + '-' + getTime.getFullYear()
-      return res.render('edit', { record })
+      return res.render('edit', { record: record.get() })
     })
+    .catch(error => { return res.status(422).json(error) })
 
 })
 
@@ -75,33 +94,43 @@ router.put('/:id', authenticated, (req, res) => {
   if (!amount) { errors.push({ message: '消費金額不可空白' }) }
   if (errors.length > 0) {
     let record = req.body
-    record._id = req.params.id
+    record.id = req.params.id
     return res.render('edit', { record, errors })
   }
-  Record.findOne({ _id: req.params.id, userId: req.user._id }, (err, record) => {
-    if (err) return console.error(err)
+  Record.findOne({
+    where: {
+      UserId: req.user.id,
+      Id: req.params.id
+    }
+  }).then(record => {
 
     record.name = name
     record.date = date
     record.category = category
     record.amount = amount
     record.merchant = merchant
-    record.save(err => {
-      if (err) return console.error(err)
-      return res.redirect('/')
-    })
+    return record.save()
   })
+    .then(record => res.redirect('/'))
+    .catch(error => res.status(422).json(error))
 })
 
 // 刪除一筆資料
 router.delete('/:id', authenticated, (req, res) => {
-  Record.findOne({ _id: req.params.id, userId: req.user._id }, (err, record) => {
-    if (err) return console.error(err)
-    record.remove(err => {
-      if (err) return console.error(err)
-      return res.redirect('/')
+
+  User.findByPk(req.user.id)
+    .then(user => {
+      if (!user) throw new Error("user not found")
+
+      return Record.destroy({
+        where: {
+          UserId: req.user.id,
+          Id: req.params.id
+        }
+      })
     })
-  })
+    .then((record) => { return res.redirect('/') })
+    .catch((error) => { return res.status(422).json(error) })
 
 })
 

@@ -1,18 +1,21 @@
 const LocalStrategy = require('passport-local').Strategy
 const FacebookStrategy = require('passport-facebook').Strategy
-const User = require('../models/user')
+const db = require('../models')
+const User = db.User
 const bcrypt = require('bcryptjs')
 
 module.exports = (passport) => {
 
   passport.use(
-    new LocalStrategy({ usernameField: 'email' },
+    new LocalStrategy(
+      { usernameField: 'email' },
       (username, password, done) => {
-        User.findOne({ email: username })
+        User.findOne({ where: { email: username } })
           .then(user => {
             if (!user) { return done(null, false, { message: '此Email尚未註冊' }) }
 
-            bcrypt.compare(password, user.password, function (err, isMatch) {
+            bcrypt.compare(password, user.password, (err, isMatch) => {
+              if (err) throw err
               if (isMatch) {
                 return done(null, user)
               } else {
@@ -30,8 +33,8 @@ module.exports = (passport) => {
       callbackURL: process.env.FACEBOOK_CALLBACK,
       profileFields: ['displayName', 'email']
     },
-      function (accessToken, refreshToken, profile, done) {
-        User.findOne({ email: profile._json.email })
+      (accessToken, refreshToken, profile, done) => {
+        User.findOne({ where: { email: profile._json.email } })
           .then(user => {
             if (!user) {
               var newUser = new User({ email: profile._json.email, name: profile._json.name })
@@ -60,10 +63,10 @@ module.exports = (passport) => {
   });
 
   passport.deserializeUser(function (id, done) {
-    User.findById(id)
-      .lean()
-      .exec((err, user) => {
-        done(err, user)
+    User.findByPk(id)
+      .then(user => {
+        user = user.get()
+        done(null, user)
       })
   })
 }

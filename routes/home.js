@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const Record = require('../models/record')
+const db = require('../models')
+const Record = db.Record
 const { authenticated } = require('../config/auth')
 const { getTotal } = require('../expense-tracker')
 
@@ -15,10 +16,12 @@ router.get('/filter', authenticated, (req, res) => {
 
   const filter = req.query
 
-  Record.find({ userId: req.user._id })
-    .lean()
-    .exec((err, records) => {
-      if (err) return console.error(err)
+  Record.findAll({
+    raw: true,
+    nest: true,
+    where: { UserId: req.user.id }
+  })
+    .then(records => {
 
       if (filter.month || filter.category) {//是否有勾選篩選條件
 
@@ -90,7 +93,7 @@ router.get('/filter', authenticated, (req, res) => {
 
       return res.render('index', { records, totalAmount: getTotal(records), filter })
 
-    })
+    }).catch((error) => { return res.status(422).json(error) })
 })
 
 module.exports = router

@@ -14,7 +14,7 @@
           {{#each records}}
 
             <li class="list-group-item d-flex justify-content-between lh-condensed">
-              <a href="/record/{{this._id}}/edit" class="text-decoration-none">
+              <a href="/record/{{this.id}}/edit" class="text-decoration-none">
                 <i class="fas {{this.category}}"></i>
                 <h6 class="my-0">{{this.name}}</h6>
                 <small class="text-muted">{{this.date}}</small>
@@ -25,16 +25,16 @@
                   <span class="text-muted">${{this.amount}}</span>
                 </li>
                 <li>
-                  <a class="text-decoration-none" href="/record/{{this._id}}/edit">
+                  <a class="text-decoration-none" href="/record/{{this.id}}/edit">
                     <i class="fas fa-edit mb-05"></i>
                   </a>
-                  <form class="list-inline-item ml-5" action="/record/{{this._id}}?_method=DELETE" method="POST">
-                    <label for="{{this._id}}">
+                  <form class="list-inline-item ml-5" action="/record/{{this.id}}?_method=DELETE" method="POST">
+                    <label for="{{this.id}}">
                       <a class="text-decoration-none">
                         <i class="fas fa-trash-alt mr-02 delete-icon"></i>
                       </a>
                     </label>
-                    <input type="submit" class="delete" id="{{this._id}}" hidden>
+                    <input type="submit" class="delete" id="{{this.id}}" hidden>
                   </form>
                 </li>
               </ul>
