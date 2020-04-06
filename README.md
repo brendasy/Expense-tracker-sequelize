@@ -56,8 +56,8 @@ Enter the URL http://localhost:3000 at browser
 * [nvm-windows](https://github.com/coreybutler/nvm-windows) - Node.js environment for windows OS
 * [nvm](https://github.com/nvm-sh/nvm) - Node.js environment for Linux / Mac OS
 * [cmder](https://cmder.net/) - Used to type cmd in windows OS
-* [MySQL](Windows） https://dev.mysql.com/downloads/windows/installer/
-
+* [MySQL](https://dev.mysql.com/downloads/windows/installer/) - MySQL for windows OS
+* [MySQL](https://dev.mysql.com/downloads/mysql) - MySQL for Mac OS
 
 ## Authors
 
