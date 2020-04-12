@@ -31,24 +31,21 @@ router.get('/filter', authenticated, (req, res) => {
 
           const getTime = record.date
           record.date = getTime.toLocaleDateString()
-          if (filter.month && filter.category) {
-            if (filter.month.includes(recordsMonth.toString())) { //是否符合篩選月份
 
-              if (filter.category.includes(record.category)) { return true }  //是否符合篩選類別
-              else { return false }
-
-            } else { return false }
+          if (filter.month && filter.category) {  //篩選月份&類別
+            return (filter.month.includes(recordsMonth.toString()) &&  //是否符合篩選月份&類別
+              filter.category.includes(record.category))
           }
           else if (filter.month) {  //僅篩選月份
-            if (filter.month.includes(recordsMonth.toString())) { return true } //是否符合篩選月份
-            else { return false }
+            return (filter.month.includes(recordsMonth.toString())) //是否符合篩選月份
           }
           else if (filter.category) { //僅篩選類別
-            if (filter.category.includes(record.category)) { return true }  //是否符合篩選類別
-            else { return false }
+            return (filter.category.includes(record.category)) //是否符合篩選類別
+          }
+          else {
+            return false
           }
 
-          return false
         })
       } else {
 
